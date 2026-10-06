@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="cs"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ZABALENO – objednávky, výroba a zisk</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Fraunces:opsz,wght@9..144,600&display=swap">
+<style>
+:root{color-scheme:light;--bg:#f6f0e4;--card:#fff;--ink:#2a2a2d;--mute:#85807a;--gold:#b8934a;--soft:#f1e6cc;--line:#ece4d3;--bad:#b4472f;--sh:0 1px 2px rgba(60,45,20,.05),0 8px 24px rgba(60,45,20,.06);box-sizing:border-box;padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:inherit}html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 "DM Sans",system-ui,sans-serif}
+h2,h3,.num{font-family:Fraunces,Georgia,serif;font-weight:600;margin:0}
+button,input,select,textarea{font:inherit;color:inherit}
+nav{position:fixed;z-index:20;background:var(--card);display:flex;box-shadow:var(--sh);left:0;right:0;bottom:0;padding:6px 4px calc(6px + env(safe-area-inset-bottom,0px))}
+nav .brand{display:none}
+nav button{flex:1;border:0;background:none;padding:7px 0;border-radius:12px;font-size:10px;color:var(--mute);cursor:pointer;display:flex;flex-direction:column;align-items:center;position:relative}
+nav button span{font-size:18px}nav button.on{color:var(--ink);background:var(--soft);font-weight:700}
+.badge{position:absolute;top:2px;right:6px;background:#c0392b;color:#fff;border-radius:99px;font-size:10px;min-width:17px;line-height:17px;font-weight:700;text-align:center}
+main{padding:18px 14px 110px;max-width:1100px;margin:0 auto}
+@media(min-width:860px){nav{top:0;bottom:0;right:auto;width:210px;flex-direction:column;padding:28px 14px;gap:6px}
+nav .brand{display:block;font:600 22px Fraunces,Georgia,serif;letter-spacing:.14em;margin:0 8px 22px}
+nav .brand i{display:block;width:28px;height:2px;background:var(--gold);margin-top:8px}
+nav button{flex:none;flex-direction:row;gap:10px;font-size:15px;padding:10px 12px}.badge{position:static;margin-left:auto}
+main{margin-left:210px;padding:30px 36px 60px;max-width:none}.wrap{max-width:1050px}}
+.top{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px}.top h2{font-size:27px}
+.btn{border:0;border-radius:999px;padding:10px 18px;cursor:pointer;font-weight:700;background:var(--ink);color:#fff}
+.btn.gold{background:var(--gold)}.btn.ghost{background:transparent;border:1px solid var(--line);color:var(--ink)}.btn.sm{padding:5px 11px;font-size:13px}.btn.del{color:var(--bad)}.btn:disabled{opacity:.4;cursor:not-allowed}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;align-items:center}
+.chip{border:1px solid var(--line);background:var(--card);border-radius:99px;padding:6px 13px;cursor:pointer;font-size:13px}.chip.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.cards{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:20px}
+@media(min-width:860px){.cards{grid-template-columns:repeat(5,1fr)}}
+.c{background:var(--card);border-radius:20px;padding:15px 17px;box-shadow:var(--sh)}.c small{color:var(--mute);font-size:12px;display:block}.c .num{font-size:22px;margin-top:4px;white-space:nowrap}
+.c.big{background:var(--ink);color:#fff}.c.big small{color:#cfc6b2}.c.big .num{color:#e6c987}.c.gold .num{color:var(--gold)}
+.panel{background:var(--card);border-radius:20px;box-shadow:var(--sh);padding:6px 4px;margin-bottom:20px}.panel h3{padding:13px 16px 4px;font-size:18px}
+.scroll{overflow-x:auto}table{border-collapse:collapse;width:100%;min-width:700px}
+th,td{padding:10px 13px;text-align:right;white-space:nowrap;border-bottom:1px solid var(--line)}th{font-weight:500;color:var(--mute);font-size:12px}
+th:nth-child(-n+2),td:nth-child(-n+2){text-align:left}tr:last-child td{border:0}td.pos{color:var(--gold);font-weight:700}
+.empty{padding:24px 18px;color:var(--mute)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:14px;margin-bottom:20px}
+.pc{background:var(--card);border-radius:20px;box-shadow:var(--sh);padding:17px}.pc h3{font-size:19px;display:flex;justify-content:space-between;gap:8px}
+.tag{font:500 11px "DM Sans";background:var(--soft);padding:2px 9px;border-radius:99px;color:#7a5f27;white-space:nowrap}
+.kv{display:grid;grid-template-columns:1fr auto;gap:4px 10px;margin:10px 0;font-size:14px}.kv b{font-weight:500;text-align:right}.kv span{color:var(--mute)}
+.row{display:flex;gap:8px;flex-wrap:wrap}.lines{margin:8px 0;padding:0;list-style:none}.lines li{padding:2px 0}
+.modal{position:fixed;inset:0;background:rgba(30,25,15,.45);z-index:50;display:flex;align-items:flex-end;justify-content:center}
+@media(min-width:600px){.modal{align-items:center}}
+.sheet{background:var(--bg);width:100%;max-width:600px;max-height:92vh;overflow:auto;border-radius:24px 24px 0 0;padding:20px 18px calc(20px + env(safe-area-inset-bottom,0px))}
+@media(min-width:600px){.sheet{border-radius:24px}}.sheet h3{font-size:21px;margin-bottom:10px}
+label{display:block;font-size:13px;color:var(--mute);margin:10px 0 3px}
+input[type=text],input[type=number],input[type=date],select,textarea{width:100%;padding:10px 11px;border-radius:12px;border:1px solid var(--line);background:#fff}
+input:focus,select:focus,textarea:focus,button:focus-visible{outline:2px solid var(--gold);outline-offset:1px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.it{background:#fff;border:1px solid var(--line);border-radius:14px;padding:10px;margin:8px 0;display:grid;gap:6px}
+.prev{background:var(--card);border-radius:16px;padding:12px 16px;margin-top:12px;display:grid;grid-template-columns:1fr auto;gap:3px 10px}.prev b{text-align:right}.prev .t{font-weight:700;border-top:1px solid var(--line);padding-top:5px;margin-top:3px}
+.err{color:var(--bad);font-size:13px;margin-top:8px}.note{background:var(--soft);border-radius:14px;padding:10px 14px;margin-bottom:14px;font-size:13px}
+.chk{display:flex;gap:8px;align-items:center;color:var(--ink)}.chk input{width:auto}
+.tk{border-left:5px solid var(--gold)}.tk.s-new{border-color:#c0392b}.tk.s-read{border-color:#e0b100}.tk.s-progress{border-color:#e07b00}.tk.s-done{border-color:#4f9a52}
+.bell{background:var(--card);border:0;border-radius:99px;padding:8px 14px;box-shadow:var(--sh);cursor:pointer}
+#toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(86px + env(safe-area-inset-bottom,0px));background:var(--ink);color:#fff;padding:10px 18px;border-radius:99px;z-index:60;opacity:0;transition:opacity .2s;pointer-events:none;max-width:90vw}#toast.show{opacity:1}
+@media(min-width:860px){#toast{bottom:30px}}@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style></head><body>
+<nav id="nav"></nav><main><div class="wrap" id="view"></div></main><div id="modal"></div><div id="toast"></div>
+<script src="api.js"></script>
+<script>
+const $=s=>document.querySelector(s),uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+const r2=n=>Math.round((n+Number.EPSILON)*100)/100,esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const kc=n=>new Intl.NumberFormat('cs-CZ',{maximumFractionDigits:2}).format(r2(n))+' Kč';
+const iso=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'),today=()=>iso(new Date());
+const cz=s=>{if(!s)return'–';const[y,m,d]=s.split('-');return `${+d}. ${+m}. ${y}`};
+const OS={nova:['🟡','Nová'],vyroba:['🟠','Výroba'],vyrobeno:['🟢','Vyrobeno'],pripraveno:['🔵','Připraveno k předání'],predano:['🟣','Předáno'],zruseno:['⚫','Zrušeno']};
+const TS={new:['🔴','Nové'],read:['🟡','Přečteno'],progress:['🟠','V procesu'],done:['🟢','Dokončeno']};
+const D={products:[],orders:[],sales:[],tasks:[],notifs:[]};let cfg={me:'Já',partner:'Partner'};
+let db=null,admin=false,asPartner=false,canW=true,view='prehled',flt={r:'day',from:'',to:''},cur=null,ready=false;
+const isA=()=>admin&&!asPartner,role=()=>isA()?'admin':'partner';
+function calc(l){const rev=r2(l.price*l.qty),cost=r2(l.cost*l.qty),profit=r2(rev-cost),mine=r2(profit*l.my/100);return{rev,cost,profit,mine,partner:r2(profit-mine)}}
+const tot=ls=>ls.reduce((t,l)=>{const c=calc(l);for(const k in c)t[k]+=c[k];t.qty+=+l.qty;return t},{rev:0,cost:0,profit:0,mine:0,partner:0,qty:0});
+const vtxt=i=>Object.values(i.vars||{}).filter(Boolean).join(', ');
+const lineTxt=i=>`${esc(i.pname)}${vtxt(i)?' ('+esc(vtxt(i))+')':''} × ${i.qty}`;
+function range(){const t=new Date(),d=iso(t);if(flt.r==='all')return[null,null];if(flt.r==='day')return[d,d];
+ if(flt.r==='week'){const w=new Date(t);w.setDate(t.getDate()-((t.getDay()+6)%7));const e=new Date(w);e.setDate(w.getDate()+6);return[iso(w),iso(e)]}
+ if(flt.r==='month')return[iso(new Date(t.getFullYear(),t.getMonth(),1)),iso(new Date(t.getFullYear(),t.getMonth()+1,0))];
+ if(flt.r==='year')return[t.getFullYear()+'-01-01',t.getFullYear()+'-12-31'];return[flt.from||null,flt.to||null]}
+const fSales=()=>{const[a,b]=range();return D.sales.filter(s=>(!a||s.date>=a)&&(!b||s.date<=b)).sort((x,y)=>y.date.localeCompare(x.date)||(y.ts||0)-(x.ts||0))};
+const save=async(path,data)=>{try{await db.doc(path).set(data);return true}catch(e){toast('Uložení se nepovedlo: '+e.message);return false}};
+const del=async p=>{try{await db.doc(p).delete()}catch(e){toast('Smazání se nepovedlo.')}};
+const notify=async()=>{}; // upozornění vytváří server (v transakci)
+function toast(m){const t=$('#toast');t.textContent=m;t.className='show';clearTimeout(toast.t);toast.t=setTimeout(()=>t.className='',2600)}
+// ---------- společné komponenty
+const filterBar=()=>`<div class="chips">${[['day','Dnes'],['week','Tento týden'],['month','Tento měsíc'],['year','Tento rok'],['custom','Vlastní období'],['all','Vše']].map(([k,l])=>`<button class="chip ${flt.r===k?'on':''}" data-a="flt" data-k="${k}">${l}</button>`).join('')}${flt.r==='custom'?`<input type="date" id="ff" value="${flt.from}" style="width:auto"> – <input type="date" id="ft" value="${flt.to}" style="width:auto">`:''}</div>`;
+const cards=t=>`<div class="cards"><div class="c"><small>💰 Tržby</small><div class="num">${kc(t.rev)}</div></div><div class="c"><small>📦 Náklady</small><div class="num">${kc(t.cost)}</div></div><div class="c big"><small>📈 Zisk</small><div class="num">${kc(t.profit)}</div></div><div class="c gold"><small>👩 ${esc(cfg.me)}</small><div class="num">${kc(t.mine)}</div></div><div class="c gold"><small>👨 ${esc(cfg.partner)}</small><div class="num">${kc(t.partner)}</div></div></div>`;
+const pill=(m,k)=>`<span class="tag">${m[k][0]} ${m[k][1]}</span>`;
+function salesTable(list,act){if(!list.length)return`<div class="empty">V tomto období nejsou žádné prodeje.</div>`;
+ return`<div class="scroll"><table><thead><tr><th>Datum</th><th>Produkt</th><th>Ks</th><th>Zdroj</th><th>Tržba</th><th>Náklady</th><th>Zisk</th><th>${esc(cfg.me)}</th><th>${esc(cfg.partner)}</th>${act?'<th></th>':''}</tr></thead><tbody>`+list.map(s=>{const t=tot(s.lines);return`<tr><td>${cz(s.date)}</td><td>${s.lines.map(l=>esc(l.pname)).join(', ')}</td><td>${t.qty}</td><td>${s.num?'Objednávka #'+esc(s.num):'Ruční'}</td><td>${kc(t.rev)}</td><td>${kc(t.cost)}</td><td>${kc(t.profit)}</td><td class="pos">${kc(t.mine)}</td><td class="pos">${kc(t.partner)}</td>${act?`<td>${s.oid?`<button class="btn ghost sm" data-a="order" data-id="${s.oid}">Objednávka</button>`:`<button class="btn ghost sm" data-a="editSale" data-id="${s.id}">Upravit</button> <button class="btn ghost sm del" data-a="delSale" data-id="${s.id}">Smazat</button>`}</td>`:''}</tr>`}).join('')+'</tbody></table></div>'}
+const cnt=(arr,f)=>arr.filter(f).length,newTasks=()=>cnt(D.tasks,t=>t.status==='new');
+function taskCard(t,btns){const o=D.orders.find(x=>x.id===t.oid);return`<div class="pc tk s-${t.status}"><h3>Objednávka #${esc(t.num)} ${pill(TS,t.status)}</h3><div style="color:var(--mute);font-size:13px">${esc(t.customer)} · termín ${cz(t.due)}</div><b style="font-size:13px">VYTISKNOUT:</b><ul class="lines">${t.items.map(i=>`<li>${lineTxt(i)}</li>`).join('')}</ul>${t.note?`<div class="note">${esc(t.note)}</div>`:''}<div class="row">${btns?({new:`<button class="btn gold" data-a="task" data-id="${t.id}" data-s="read">PŘEČTENO</button>`,read:`<button class="btn gold" data-a="task" data-id="${t.id}" data-s="progress">ZAHÁJIT VÝROBU</button>`,progress:`<button class="btn gold" data-a="task" data-id="${t.id}" data-s="done">DOKONČIT</button>`}[t.status]||''):''}${isA()&&o?`<button class="btn ghost sm" data-a="order" data-id="${o.id}">Detail</button>`:''}</div></div>`}
+// ---------- zobrazení
+function nav(){const it=isA()?[['prehled','📊','Přehled'],['objednavky','🧾','Objednávky'],['vyroba','🛠️','Výroba'],['prodeje','🛍️','Prodeje'],['produkty','📦','Produkty'],['statistiky','📈','Statistiky'],['nastaveni','⚙️','Nastavení']]:[['vyroba','🛠️','Výroba']];
+ const n=newTasks();$('#nav').innerHTML='<div class="brand">ZABALENO<i></i></div>'+it.map(([k,i,l])=>`<button class="${view===k?'on':''}" data-a="nav" data-k="${k}"><span>${i}</span>${l}${k==='vyroba'&&n?`<b class="badge">${n}</b>`:''}</button>`).join('')+'<button data-a="logout"><span>🚪</span>Odhlásit se</button>'}
+function header(title,extra){const nn=D.notifs.filter(n=>n.to===role()&&!n.read).length;return`<div class="top"><h2>${title}</h2><div class="row"><button class="bell" data-a="bell">🔔${nn?` <b style="color:#c0392b">${nn}</b>`:''}</button>${extra||''}</div></div>`}
+function render(){if(!ready)return;nav();if(!isA()&&view!=='vyroba')view='vyroba';let h='';
+ const ns=D.sales,fs=fSales(),t=tot(fs.flatMap(s=>s.lines)),oc=s=>cnt(D.orders,o=>o.status===s);
+ if(view==='prehled')h+=header('Přehled',`<button class="btn gold" data-a="newOrder">+ Nová objednávka</button>`)+filterBar()+cards(t)+`<div class="cards"><div class="c"><small>🟡 Nové objednávky</small><div class="num">${oc('nova')}</div></div><div class="c"><small>🟠 Ve výrobě</small><div class="num">${oc('vyroba')}</div></div><div class="c"><small>🟢 Vyrobené</small><div class="num">${oc('vyrobeno')}</div></div><div class="c"><small>🔔 Nové úkoly výroby</small><div class="num">${newTasks()}</div></div><div class="c"><small>🔵🟣 K předání / předané</small><div class="num">${oc('pripraveno')} / ${oc('predano')}</div></div></div><div class="panel"><h3>Poslední prodeje</h3>${salesTable(fs.slice(0,6))}</div>`;
+ if(view==='objednavky'){const L=[...D.orders].sort((a,b)=>b.date.localeCompare(a.date)||b.ts-a.ts);h+=header('Objednávky',`<button class="btn gold" data-a="newOrder">+ Nová objednávka</button>`)+`<div class="panel">${L.length?`<div class="scroll"><table><thead><tr><th>Číslo</th><th>Zákazník</th><th>Datum</th><th>Produkty</th><th>Celkem</th><th>Stav</th><th>Výroba</th><th></th></tr></thead><tbody>${L.map(o=>{const tk=D.tasks.find(x=>x.id===o.id);return`<tr><td>#${esc(o.num)}</td><td style="text-align:left">${esc(o.customer)}</td><td>${cz(o.date)}</td><td>${o.items.map(i=>esc(i.pname)+'×'+i.qty).join(', ')}</td><td>${kc(tot(o.items).rev)}</td><td>${pill(OS,o.status)}</td><td>${tk?pill(TS,tk.status):'–'}</td><td><button class="btn ghost sm" data-a="order" data-id="${o.id}">Detail</button></td></tr>`}).join('')}</tbody></table></div>`:'<div class="empty">Zatím žádné objednávky.</div>'}</div>`}
+ if(view==='vyroba'){const T=[...D.tasks].sort((a,b)=>(a.status==='done')-(b.status==='done')||b.ts-a.ts),c=s=>cnt(D.tasks,x=>x.status===s);
+  h+=header('Výroba')+`<div class="cards"><div class="c"><small>🔴 Nové</small><div class="num">${c('new')}</div></div><div class="c"><small>🟡 Přečteno</small><div class="num">${c('read')}</div></div><div class="c"><small>🟠 V procesu</small><div class="num">${c('progress')}</div></div><div class="c"><small>🟢 Dokončeno</small><div class="num">${c('done')}</div></div></div><div class="grid">${T.map(x=>taskCard(x,true)).join('')||'<div class="empty">Žádné výrobní úkoly.</div>'}</div>`}
+ if(view==='prodeje')h+=header('Prodeje a historie',`<button class="btn gold" data-a="newSale">+ Ruční prodej</button>`)+filterBar()+`<div class="panel">${salesTable(fs,true)}</div>`;
+ if(view==='produkty')h+=header('Produkty',`<button class="btn gold" data-a="newProd">+ Nový produkt</button>`)+`<div class="grid">${D.products.map(p=>`<div class="pc"><h3>${esc(p.name)} <span class="tag">${p.active?'aktivní':'neaktivní'}</span></h3>${p.cat?`<small style="color:var(--mute)">${esc(p.cat)}</small>`:''}<div class="kv"><span>Prodejní cena</span><b>${kc(p.price)}</b><span>Náklad na kus</span><b>${kc(p.cost)}</b><span>Zisk na kus</span><b>${kc(p.price-p.cost)}</b><span>${esc(cfg.me)} / ${esc(cfg.partner)}</span><b>${p.my} % / ${p.partner} %</b>${(p.variants||[]).map(v=>`<span>${esc(v.n)}</span><b>${esc(v.o.join(', '))}</b>`).join('')}</div>${p.note?`<p style="color:var(--mute);font-size:13px;margin:0 0 10px">${esc(p.note)}</p>`:''}<div class="row"><button class="btn ghost sm" data-a="editProd" data-id="${p.id}">Upravit</button><button class="btn ghost sm del" data-a="delProd" data-id="${p.id}">Smazat</button></div></div>`).join('')||'<div class="empty">Zatím žádné produkty.</div>'}</div>`;
+ if(view==='statistiky'){const g={};fs.forEach(s=>s.lines.forEach(l=>(g[l.pid||l.pname]=g[l.pid||l.pname]||{n:l.pname,l:[]}).l.push(l)));h+=header('Statistiky')+filterBar()+cards(t)+`<div class="grid">${Object.values(g).map(x=>{const q=tot(x.l);return`<div class="pc"><h3>${esc(x.n)}</h3><div class="kv"><span>Prodáno</span><b>${q.qty} ks</b><span>Tržby</span><b>${kc(q.rev)}</b><span>Náklady</span><b>${kc(q.cost)}</b><span>Zisk</span><b>${kc(q.profit)}</b><span>${esc(cfg.me)}</span><b>${kc(q.mine)}</b><span>${esc(cfg.partner)}</span><b>${kc(q.partner)}</b></div></div>`}).join('')||'<div class="empty">V tomto období nejsou data.</div>'}</div>`}
+ if(view==='nastaveni')h+=header('Nastavení')+`<div class="panel" style="padding:15px 17px"><h3 style="padding:0 0 6px">Jména</h3><div class="two"><div><label>Moje jméno</label><input type="text" id="sme" value="${esc(cfg.me)}"></div><div><label>Jméno partnera</label><input type="text" id="spa" value="${esc(cfg.partner)}"></div></div><p><button class="btn" data-a="saveSet">Uložit jména</button></p></div><div class="panel" style="padding:15px 17px"><h3 style="padding:0 0 6px">Pohled partnera</h3><p style="color:var(--mute);margin-top:0">Zobrazí aplikaci tak, jak ji vidí partner (jen výroba, bez financí). Partner se přihlásí vlastním účtem.</p><button class="btn ghost" data-a="asP">Zobrazit jako partner</button></div><div class="panel" style="padding:15px 17px"><h3 style="padding:0 0 6px">Import ze staré verze</h3><p style="color:var(--mute);margin-top:0">Vlož zálohu (text) z původní aplikace – přenese produkty a prodeje.</p><textarea id="imp" rows="4"></textarea><p><button class="btn ghost" data-a="imp">Importovat</button></p></div>`;
+ if(view==='vyroba'&&!isA())h=h.replace(/<div class="top">/,'<div class="top">');
+ if(!isA()&&admin)h=`<div class="note">Pohled partnera. <button class="btn ghost sm" data-a="asP">Zpět na admin</button></div>`+h;
+ $('#view').innerHTML=h}
+let rq=0;const paint=()=>{cancelAnimationFrame(rq);rq=requestAnimationFrame(render)};
+function modal(h){$('#modal').innerHTML=`<div class="modal" data-a="bg"><div class="sheet" role="dialog" aria-modal="true">${h}</div></div>`}const closeM=()=>$('#modal').innerHTML='';
+// ---------- objednávka
+const nextNum=()=>{const y=new Date().getFullYear(),m=D.orders.map(o=>o.num).filter(n=>String(n).startsWith(y+'-')).map(n=>+String(n).split('-')[1]||0);return `${y}-${String((m.length?Math.max(...m):0)+1).padStart(3,'0')}`};
+const newItem=p=>({pid:p.id,pname:p.name,qty:1,price:p.price,cost:p.cost,my:p.my,partner:p.partner,vars:Object.fromEntries((p.variants||[]).map(v=>[v.n,v.o[0]]))});
+function orderForm(id){const e=id?D.orders.find(o=>o.id===id):null;const act=D.products.filter(p=>p.active);if(!e&&!act.length){toast('Nejdřív vytvoř aktivní produkt');return}
+ cur=e?JSON.parse(JSON.stringify(e)):{id:null,num:nextNum(),date:today(),due:'',customer:'',contact:'',ship:'Osobní převzetí',note:'',status:'nova',items:[newItem(act[0])]};
+ modal(`<h3>${e?'Upravit objednávku':'Nová objednávka'}</h3><div class="two"><div><label>Číslo</label><input type="text" data-o="num" value="${esc(cur.num)}"></div><div><label>Datum</label><input type="date" data-o="date" value="${cur.date}"></div></div><div class="two"><div><label>Zákazník</label><input type="text" data-o="customer" value="${esc(cur.customer)}"></div><div><label>Kontakt</label><input type="text" data-o="contact" value="${esc(cur.contact)}"></div></div><div class="two"><div><label>Termín výroby</label><input type="date" data-o="due" value="${cur.due||''}"></div><div><label>Převzetí / doprava</label><select data-o="ship">${['Osobní převzetí','Zásilkovna','Pošta','Rozvoz'].map(s=>`<option ${s===cur.ship?'selected':''}>${s}</option>`).join('')}</select></div></div><label>Poznámka (uvidí ji i partner)</label><textarea data-o="note" rows="2">${esc(cur.note)}</textarea><label>Produkty v objednávce</label><div id="items"></div><button class="btn ghost sm" data-a="addIt">+ Přidat produkt</button><div id="prev"></div><div class="row" style="margin-top:16px"><button class="btn gold" id="obtn" data-a="saveOrder">${e?'Uložit změny':'Uložit objednávku'}</button><button class="btn ghost" data-a="close">Zrušit</button></div>`);itemsH();oPrev()}
+function itemsH(){$('#items').innerHTML=cur.items.map((it,i)=>{const p=D.products.find(x=>x.id===it.pid);const opts=D.products.filter(x=>x.active||x.id===it.pid).map(x=>`<option value="${x.id}" ${x.id===it.pid?'selected':''}>${esc(x.name)}</option>`).join('');return`<div class="it"><select data-i="${i}" data-f="pid">${opts}</select>${p&&p.variants&&p.variants.length?`<div class="two">${p.variants.map(v=>`<select data-i="${i}" data-f="var" data-v="${esc(v.n)}" aria-label="${esc(v.n)}">${v.o.map(o=>`<option ${it.vars&&it.vars[v.n]===o?'selected':''}>${esc(o)}</option>`).join('')}</select>`).join('')}</div>`:''}<div class="two"><div><label>Množství</label><input type="number" min="1" step="1" data-i="${i}" data-f="qty" value="${it.qty}"></div><div><label>Cena za kus (Kč)</label><input type="number" min="0" step="0.01" data-i="${i}" data-f="price" value="${it.price}"></div></div>${cur.items.length>1?`<button class="btn ghost sm del" data-a="rmIt" data-i="${i}">Odebrat</button>`:''}</div>`}).join('')}
+function oPrev(){const bad=!cur.customer.trim()?'Zadej jméno zákazníka.':!cur.num.trim()?'Zadej číslo objednávky.':cur.items.some(i=>!Number.isInteger(+i.qty)||+i.qty<1)?'Množství musí být celé číslo od 1.':cur.items.some(i=>!(+i.price>=0))?'Zadej platné ceny.':D.orders.some(o=>o.num===cur.num.trim()&&o.id!==cur.id)?'Toto číslo objednávky už existuje.':'';
+ const t=tot(cur.items.map(i=>({...i,qty:+i.qty||0,price:+i.price||0})));$('#prev').innerHTML=`<div class="prev"><span>Celková cena</span><b>${kc(t.rev)}</b><span>Náklady</span><b>${kc(t.cost)}</b><span class="t">Zisk</span><b class="t">${kc(t.profit)}</b><span>${esc(cfg.me)}</span><b>${kc(t.mine)}</b><span>${esc(cfg.partner)}</span><b>${kc(t.partner)}</b></div>${bad?`<div class="err">${bad}</div>`:''}`;$('#obtn').disabled=!!bad}
+async function saveOrder(){const id=cur.id||uid(),isNew=!cur.id,items=cur.items.map(i=>({...i,qty:+i.qty,price:+i.price})),o={...cur,id,num:cur.num.trim(),customer:cur.customer.trim(),items,ts:cur.ts||Date.now()};
+ if(!await save('orders/'+id,o))return; // server v jedné transakci vytvoří i výrobní úkol, prodej a upozornění
+ closeM();toast(isNew?'Objednávka uložena, prodej a výrobní úkol vytvořeny':'Objednávka upravena')}
+async function setOrderStatus(o,st){await save('orders/'+o.id,{...o,status:st})}
+function orderDetail(id){const o=D.orders.find(x=>x.id===id);if(!o)return;const t=tot(o.items),tk=D.tasks.find(x=>x.id===id);
+ modal(`<h3>Objednávka #${esc(o.num)}</h3><div class="kv"><span>Zákazník</span><b>${esc(o.customer)}</b><span>Kontakt</span><b>${esc(o.contact)||'–'}</b><span>Datum</span><b>${cz(o.date)}</b><span>Termín výroby</span><b>${cz(o.due)}</b><span>Převzetí</span><b>${esc(o.ship)}</b></div>${o.note?`<div class="note">${esc(o.note)}</div>`:''}<b>Produkty</b><ul class="lines">${o.items.map(i=>`<li>${lineTxt(i)} – ${kc(i.price*i.qty)}</li>`).join('')}</ul><div class="prev"><span>Celkem</span><b>${kc(t.rev)}</b><span>Náklady</span><b>${kc(t.cost)}</b><span class="t">Zisk</span><b class="t">${kc(t.profit)}</b><span>${esc(cfg.me)}</span><b>${kc(t.mine)}</b><span>${esc(cfg.partner)}</span><b>${kc(t.partner)}</b></div><p><b>Výroba:</b> ${tk?pill(TS,tk.status):'–'}</p><label>Stav objednávky</label><select id="ost" data-id="${o.id}">${Object.entries(OS).map(([k,v])=>`<option value="${k}" ${k===o.status?'selected':''}>${v[0]} ${v[1]}</option>`).join('')}</select><div class="row" style="margin-top:16px"><button class="btn gold" data-a="editOrder" data-id="${o.id}">Upravit</button><button class="btn ghost del" data-a="delOrder" data-id="${o.id}">Smazat</button><button class="btn ghost" data-a="close">Zavřít</button></div>`)}
+// ---------- ruční prodej a produkt
+function saleForm(id){const e=id?D.sales.find(s=>s.id===id):null,act=D.products.filter(p=>p.active||(e&&e.lines[0].pid===p.id));if(!act.length){toast('Nejdřív vytvoř aktivní produkt');return}
+ const l=e?e.lines[0]:{pid:act[0].id,qty:1,price:act[0].price};cur={id:e?e.id:null,date:e?e.date:today()};
+ modal(`<h3>${e?'Upravit prodej':'Nový ruční prodej'}</h3><label>Produkt</label><select id="sp">${act.map(p=>`<option value="${p.id}" ${p.id===l.pid?'selected':''}>${esc(p.name)}</option>`).join('')}</select><div class="two"><div><label>Množství</label><input type="number" id="sq" min="1" step="1" value="${l.qty}"></div><div><label>Cena za kus (Kč)</label><input type="number" id="spr" min="0" step="0.01" value="${l.price}"></div></div><label>Datum</label><input type="date" id="sd" value="${cur.date}"><div id="prev"></div><div class="row" style="margin-top:16px"><button class="btn gold" id="sbtn" data-a="saveSale">Uložit prodej</button><button class="btn ghost" data-a="close">Zrušit</button></div>`);sPrev()}
+const sLine=()=>{const p=D.products.find(x=>x.id===$('#sp').value),e=D.sales.find(s=>s.id===cur.id);const b=e&&e.lines[0].pid===p.id?e.lines[0]:p;return{pid:p.id,pname:p.name,qty:+$('#sq').value,price:+$('#spr').value,cost:b.cost,my:b.my,partner:b.partner}};
+function sPrev(){const l=sLine(),err=!Number.isInteger(l.qty)||l.qty<1?'Množství musí být celé číslo od 1.':!(l.price>=0)?'Zadej platnou cenu.':!$('#sd').value?'Vyber datum.':'',c=err?{rev:0,cost:0,profit:0,mine:0,partner:0}:calc(l);$('#prev').innerHTML=`<div class="prev"><span>Tržba</span><b>${kc(c.rev)}</b><span>Náklady</span><b>${kc(c.cost)}</b><span class="t">Zisk</span><b class="t">${kc(c.profit)}</b><span>${esc(cfg.me)} (${l.my} %)</span><b>${kc(c.mine)}</b><span>${esc(cfg.partner)} (${l.partner} %)</span><b>${kc(c.partner)}</b></div>${err?`<div class="err">${err}</div>`:''}`;$('#sbtn').disabled=!!err}
+const vText=p=>(p.variants||[]).map(v=>v.n+': '+v.o.join(', ')).join('\n');
+function prodForm(id){const p=id?D.products.find(x=>x.id===id):{name:'',price:'',cost:'',my:60,partner:40,cat:'',note:'',active:true,variants:[]};cur={id:id||null};
+ modal(`<h3>${id?'Upravit produkt':'Nový produkt'}</h3><label>Název</label><input type="text" id="pn" value="${esc(p.name)}"><div class="two"><div><label>Prodejní cena (Kč)</label><input type="number" id="pp" min="0" step="0.01" value="${p.price}"></div><div><label>Náklad na kus (Kč)</label><input type="number" id="pc" min="0" step="0.01" value="${p.cost}"></div></div><div class="two"><div><label>Můj podíl (%)</label><input type="number" id="pm" min="0" max="100" value="${p.my}"></div><div><label>Podíl partnera (%)</label><input type="number" id="pa" min="0" max="100" value="${p.partner}"></div></div><label>Varianty (jeden řádek = jedna vlastnost, např. „Barva: bílá, béžová“)</label><textarea id="pv" rows="3">${esc(vText(p))}</textarea><label>Kategorie</label><input type="text" id="pk" value="${esc(p.cat)}"><label>Poznámka</label><textarea id="pt" rows="2">${esc(p.note)}</textarea><label class="chk"><input type="checkbox" id="pac" ${p.active?'checked':''}> Aktivní (nabízet v nových prodejích a objednávkách)</label><div id="perr"></div><div class="row" style="margin-top:16px"><button class="btn gold" id="pbtn" data-a="saveProd">Uložit produkt</button><button class="btn ghost" data-a="close">Zrušit</button></div>`);pCheck()}
+function pCheck(){const g=i=>parseFloat($(i).value);let e='';if(!$('#pn').value.trim())e='Zadej název produktu.';else if(!(g('#pp')>=0))e='Zadej prodejní cenu.';else if(!(g('#pc')>=0))e='Zadej náklad na kus.';else if(!(g('#pm')>=0)||!(g('#pa')>=0))e='Zadej obě procenta.';else if(Math.abs(g('#pm')+g('#pa')-100)>1e-9)e=`Procenta musí dávat dohromady 100 % (teď ${r2(g('#pm')+g('#pa'))} %).`;$('#perr').innerHTML=e?`<div class="err">${e}</div>`:'';$('#pbtn').disabled=!!e}
+const parseV=s=>s.split('\n').map(l=>l.split(':')).filter(a=>a.length>1&&a[0].trim()).map(a=>({n:a[0].trim(),o:a.slice(1).join(':').split(',').map(x=>x.trim()).filter(Boolean)})).filter(v=>v.o.length);
+// ---------- události
+document.addEventListener('input',e=>{const t=e.target,id=t.id;
+ if(t.dataset.o){cur[t.dataset.o]=t.value;if(cur.items)oPrev()}
+ if(t.dataset.f&&cur&&cur.items){const it=cur.items[+t.dataset.i];if(t.dataset.f==='pid'){cur.items[+t.dataset.i]=newItem(D.products.find(p=>p.id===t.value));itemsH()}else if(t.dataset.f==='var'){it.vars={...it.vars,[t.dataset.v]:t.value}}else it[t.dataset.f]=t.value;oPrev()}
+ if(['sp','sq','spr','sd'].includes(id)){if(id==='sp'){const p=D.products.find(p=>p.id===t.value);if(p)$('#spr').value=p.price}sPrev()}
+ if(['pn','pp','pc','pm','pa'].includes(id)){if(id==='pm'&&t.value!=='')$('#pa').value=r2(100-parseFloat(t.value));if(id==='pa'&&t.value!=='')$('#pm').value=r2(100-parseFloat(t.value));pCheck()}
+ if(id==='ff'||id==='ft'){flt.from=$('#ff').value;flt.to=$('#ft').value;const x=id;render();$('#'+x)?.focus()}});
+document.addEventListener('change',e=>{if(e.target.id==='ost'){const o=D.orders.find(x=>x.id===e.target.dataset.id);setOrderStatus(o,e.target.value).then(()=>toast('Stav změněn'))}});
+document.addEventListener('click',async e=>{const b=e.target.closest('[data-a]');if(!b)return;const a=b.dataset.a,id=b.dataset.id;if(a==='logout'){await api('POST','logout');location.reload();return}
+ if(a==='bg'){if(e.target===b)closeM();return}if(a==='close')closeM();
+ if(a==='nav'){view=b.dataset.k;render();scrollTo(0,0)}if(a==='flt'){flt.r=b.dataset.k;render()}
+ if(a==='asP'){asPartner=!asPartner;view=asPartner?'vyroba':'prehled';render()}
+ if(a==='bell'){const L=D.notifs.filter(n=>n.to===role()).sort((x,y)=>y.ts-x.ts).slice(0,30);modal(`<h3>Upozornění</h3>${L.map(n=>`<div class="it" style="${n.read?'opacity:.6':''}">🔔 ${esc(n.text)}<small style="color:var(--mute)">${new Date(n.ts).toLocaleString('cs-CZ')}</small></div>`).join('')||'<div class="empty">Žádná upozornění.</div>'}<div class="row" style="margin-top:12px"><button class="btn ghost" data-a="close">Zavřít</button></div>`);L.filter(n=>!n.read).forEach(n=>save('notifs/'+n.id,{...n,read:true}))}
+ if(a==='newOrder')orderForm();if(a==='editOrder')orderForm(id);if(a==='order')orderDetail(id);
+ if(a==='addIt'){const p=D.products.find(x=>x.active);if(p){cur.items.push(newItem(p));itemsH();oPrev()}}
+ if(a==='rmIt'){cur.items.splice(+b.dataset.i,1);itemsH();oPrev()}
+ if(a==='saveOrder')saveOrder();
+ if(a==='delOrder'&&confirm('Smazat objednávku včetně prodeje a výrobního úkolu?')){await del('orders/'+id);closeM();toast('Objednávka smazána')}
+ if(a==='task'){const t=D.tasks.find(x=>x.id===id);await save('tasks/'+id,{...t,status:b.dataset.s})} // stav objednávky a upozornění řeší server
+ if(a==='newSale')saleForm();if(a==='editSale')saleForm(id);
+ if(a==='delSale'&&confirm('Smazat prodej?'))await del('sales/'+id);
+ if(a==='saveSale'){const l=sLine(),sid=cur.id||uid();if(await save('sales/'+sid,{id:sid,date:$('#sd').value,lines:[l],ts:Date.now()})){closeM();toast('Prodej uložen')}}
+ if(a==='newProd')prodForm();if(a==='editProd')prodForm(id);
+ if(a==='delProd'&&confirm('Smazat produkt? Staré objednávky a prodeje zůstanou.'))await del('products/'+id);
+ if(a==='saveProd'){const pid=cur.id||uid();if(await save('products/'+pid,{id:pid,name:$('#pn').value.trim(),price:+$('#pp').value,cost:+$('#pc').value,my:+$('#pm').value,partner:+$('#pa').value,cat:$('#pk').value.trim(),note:$('#pt').value.trim(),active:$('#pac').checked,variants:parseV($('#pv').value)})){closeM();toast('Produkt uložen')}}
+ if(a==='saveSet'){if(await save('settings/main',{me:$('#sme').value.trim()||'Já',partner:$('#spa').value.trim()||'Partner'}))toast('Jména uložena')}
+ if(a==='imp'){try{const j=JSON.parse($('#imp').value);if(!j.products||!j.sales)throw 0;for(const p of j.products)await save('products/'+p.id,{...p,variants:[]});for(const s of j.sales)await save('sales/'+s.id,{id:s.id,date:s.date,ts:s.ts||Date.now(),lines:[{pid:s.pid,pname:s.pname,qty:s.qty,price:s.price,cost:s.cost,my:s.my,partner:s.partner}]});toast('Import hotov')}catch(x){toast('Záloha není platná.')}}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeM()});
+// ---------- start
+(async()=>{try{db=dbShim;const me=await api('GET','me');admin=me.role==='admin';
+ if(!admin){view='vyroba'}ready=true;
+ for(const k of Object.keys(D))db.collection(k).onSnapshot(s=>{D[k]=s.docs.map(d=>({...d.data(),id:d.id}));paint()},()=>{});
+ db.doc('settings/main').onSnapshot(s=>{if(s.exists)cfg={...cfg,...s.data()};paint()},()=>{});paint()}
+ catch(e){if(e.status===401)loginView();else $('#view').innerHTML='<div class="note" style="margin-top:30px">Aplikaci se nepodařilo spustit: '+esc(e.message)+'</div>'}})();
+</script></body></html>
